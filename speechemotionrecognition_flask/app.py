@@ -49,7 +49,7 @@ def extract_features(file_path, mfcc=True, chroma=True, mel=True):
     return result
 
 # Route for predicting emotions
-@app.route('/predict', methods=['POST'])
+@app.route('/api/predict', methods=['POST'])
 def predict_emotion():
     # Check if the POST request has the file part
     if 'file' not in request.files:

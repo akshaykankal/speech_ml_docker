@@ -110,7 +110,8 @@ const EmotionRecorderForm = () => {
       }
 
       
-      const response = await axios.post('/api/predict', formData, {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || '/api';
+      const response = await axios.post(`${backendUrl}/predict`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
