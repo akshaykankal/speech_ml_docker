@@ -29,37 +29,38 @@ const EmotionRecorderForm = () => {
 
   const handleAudioRecording = async () => {
     try {
-      const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(audioStream);
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      const audioChunks = [];
 
-      let chunks = [];
       mediaRecorder.ondataavailable = (event) => {
-        chunks.push(event.data);
+        audioChunks.push(event.data);
       };
 
-      mediaRecorder.onstart = () => {
-        setRecording(true);
-        setRemainingTime(5);
-        const countdownInterval = setInterval(() => {
-          setRemainingTime((prevTime) => prevTime - 1);
-        }, 1000);
-
-        mediaRecorder.onstop = () => {
-          setRecording(false);
-          clearInterval(countdownInterval);
-          const audioBlob = new Blob(chunks, { type: 'audio/wav' });
-          setAudioBlob(audioBlob);
-        };
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        setAudioBlob(audioBlob);
+        setRecording(false);
       };
 
+      setRecording(true);
+      setRemainingTime(5);
       mediaRecorder.start();
 
-      setTimeout(() => {
-        mediaRecorder.stop();
-      }, 5000);
-    } catch (error) {
-      console.error('Error accessing microphone:', error);
-      setError('Error accessing microphone. Please check your device settings.');
+      const timer = setInterval(() => {
+        setRemainingTime((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(timer);
+            mediaRecorder.stop();
+            stream.getTracks().forEach(track => track.stop());
+            return 0;
+          }
+          return prevTime - 1;
+        });
+      }, 1000);
+    } catch (err) {
+      console.error('Error accessing microphone:', err);
+      setError(`Error accessing microphone: ${err.message}`);
     }
   };
 
@@ -109,7 +110,7 @@ const EmotionRecorderForm = () => {
       }
 
       
-      const response = await axios.post('http://backend:10000/predict', formData, {
+      const response = await axios.post('http://localhost:10000/predict', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
@@ -129,7 +130,7 @@ const EmotionRecorderForm = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row w-full min-h-screen bg-gradient-to-br from-yellow-100 to-red-100 p-4 space-y-4 md:space-y-0 md:space-x-4">
+    <div className="flex flex-col md:flex-row w-full  bg-gradient-to-br from-yellow-100 to-red-100 p-4 space-y-4 md:space-y-0 md:space-x-4">
       <div className="flex flex-col w-full md:w-1/3 bg-white rounded-lg shadow-lg p-6 space-y-6">
         <h2 className="text-2xl font-bold text-center text-gray-800">VaaniVibes</h2>
         <p className="text-sm text-center text-gray-600">Indian Multi-Lingual Speech Emotion Recognition System</p>
