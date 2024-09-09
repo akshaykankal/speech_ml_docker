@@ -110,7 +110,7 @@ const EmotionRecorderForm = () => {
       }
 
       
-      const response = await axios.post('http://localhost:10000/predict', formData, {
+      const response = await axios.post('http://127.0.0.1:10000/predict', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
