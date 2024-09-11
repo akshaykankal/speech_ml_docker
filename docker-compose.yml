@@ -3,7 +3,7 @@ services:
   backend:
     build: ./speechemotionrecognition_flask
     expose:
-      - "10000:80"
+      - "10000"
     volumes:
       - ./backend:/app
     environment:
