@@ -30,7 +30,7 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot --force-renewal --email akshaykankal@gmail.com -d 3.111.186.164 --agree-tos
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email akshaykankal@gmail.com -d ec2-3-111-186-164.ap-south-1.compute.amazonaws.com --agree-tos
 
 networks:
   app-network:
