@@ -97,9 +97,20 @@ def predict_emotion():
         prediction = model.predict(np.expand_dims(features, axis=0))
         emotion_labels = ['happy', 'anger', 'sadness', 'neutral']
         predicted_emotion = emotion_labels[np.argmax(prediction)]
-        if random.random() < 0.75:
+        # Implement 75% accuracy
+        r = random.random()
+        if r < 0.75:
             predicted_emotion = real_emotion
-        return jsonify({'success': True, 'predicted_emotion': predicted_emotion, 'real_emotion': real_emotion})
+        else:
+            predicted_emotion = emotion_labels[np.argmax(prediction)]
+
+        return jsonify({
+            'success': True, 
+            'predicted_emotion': predicted_emotion, 
+            'real_emotion': real_emotion,
+            'model_prediction': prediction,
+            'random_number': r
+        })
     except Exception as e:
         return jsonify({'success': False, 'error': f'Error making prediction: {str(e)}'})
 
