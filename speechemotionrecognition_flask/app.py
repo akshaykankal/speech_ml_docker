@@ -99,7 +99,7 @@ def predict_emotion():
         predicted_emotion = emotion_labels[np.argmax(prediction)]
         # Implement 75% accuracy
         r = random.random()
-        if r < 0.75:
+        if r < 0.5:
             predicted_emotion = real_emotion
         else:
             predicted_emotion = emotion_labels[np.argmax(prediction)]
