@@ -108,8 +108,7 @@ def predict_emotion():
             'success': True, 
             'predicted_emotion': predicted_emotion, 
             'real_emotion': real_emotion,
-            'model_prediction': prediction,
-            'random_number': r
+            'model_prediction': prediction
         })
     except Exception as e:
         return jsonify({'success': False, 'error': f'Error making prediction: {str(e)}'})
