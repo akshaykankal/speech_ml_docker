@@ -21,7 +21,7 @@ const EmotionRecorderForm = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
 
   const emotions = ['happy', 'anger', 'sadness', 'neutral'];
-  
+
 
   const handleEmotionChange = (emotion) => {
     setSelectedEmotion(emotion);
@@ -65,13 +65,21 @@ const EmotionRecorderForm = () => {
   };
 
   const handleReplay = () => {
-    const audioURL = URL.createObjectURL(audioBlob);
-    const audio = new Audio(audioURL);
-    audio.play();
+    if (audioBlob || uploadedFile) {
+      const audioURL = URL.createObjectURL(audioBlob || uploadedFile);
+      const audio = new Audio(audioURL);
+      audio.play();
+    }
   };
 
   const handleRestartRecording = () => {
     setAudioBlob(null);
+    setUploadedFile(null);
+    // If you have a file input element, you might want to reset it as well
+    const fileInput = document.getElementById('file-upload');
+    if (fileInput) {
+      fileInput.value = '';
+    }
   };
 
   const handleFileChange = (event) => {
@@ -109,9 +117,9 @@ const EmotionRecorderForm = () => {
         throw new Error('No audio file selected');
       }
 
-      
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || '/api';
-      const response = await axios.post(`${backendUrl}/predict`, formData, {
+
+      const backendUrl = "http://ec2-3-111-186-164.ap-south-1.compute.amazonaws.com";
+      const response = await axios.post(`${backendUrl}/api/predict`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
@@ -127,6 +135,10 @@ const EmotionRecorderForm = () => {
       setError(error.message || 'An error occurred during submission.');
     } finally {
       setLoading(false);
+      // Reset the buttons and audio state
+      setAudioBlob(null);
+      setUploadedFile(null);
+      setSelectedEmotion('happy');
     }
   };
 
@@ -142,11 +154,10 @@ const EmotionRecorderForm = () => {
               key={emotion}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`px-4 py-2 rounded-full ${
-                selectedEmotion === emotion
+              className={`px-4 py-2 rounded-full ${selectedEmotion === emotion
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-200 text-gray-800'
-              }`}
+                }`}
               onClick={() => handleEmotionChange(emotion)}
             >
               {emotion.charAt(0).toUpperCase() + emotion.slice(1)}
@@ -186,13 +197,15 @@ const EmotionRecorderForm = () => {
 
         {(audioBlob || uploadedFile) && (
           <div className="flex flex-col items-center space-y-4">
-            <audio controls className="w-full">
-              <source
-                src={audioBlob ? URL.createObjectURL(audioBlob) : URL.createObjectURL(uploadedFile)}
-                type="audio/wav"
-              />
-              Your browser does not support the audio element.
-            </audio>
+            {(audioBlob || uploadedFile) && (
+              <audio controls className="w-full">
+                <source
+                  src={audioBlob ? URL.createObjectURL(audioBlob) : (uploadedFile ? URL.createObjectURL(uploadedFile) : '')}
+                  type="audio/wav"
+                />
+                Your browser does not support the audio element.
+              </audio>
+            )}
             <div className="flex justify-center space-x-2">
               <motion.button
                 whileHover={{ scale: 1.05 }}
