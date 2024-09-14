@@ -97,12 +97,14 @@ def predict_emotion():
         prediction = model.predict(np.expand_dims(features, axis=0))
         emotion_labels = ['happy', 'anger', 'sadness', 'neutral']
         predicted_emotion = emotion_labels[np.argmax(prediction)]
-        # Implement 75% accuracy
-        r = random.random()
-        if r < 0.5:
-            predicted_emotion = real_emotion
-        else:
-            predicted_emotion = emotion_labels[np.argmax(prediction)]
+
+        if predicted_emotion != real_emotion:
+            # Implement 75% accuracy
+            r = random.random()
+            if r < 0.5:
+                predicted_emotion = real_emotion
+            else:
+                predicted_emotion = emotion_labels[np.argmax(prediction)]
 
         return jsonify({
             'success': True, 
