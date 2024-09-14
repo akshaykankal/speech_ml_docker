@@ -27,7 +27,7 @@ def extract_emotion_from_filename(filename):
     else:
         return None
 # Load the trained model
-model = load_model('improved_emotion_recognition_model.h5')
+model = load_model('improved_em.h5')
 
 
 # Compile the model with the same metrics as it was compiled with during training
