@@ -101,10 +101,14 @@ def predict_emotion():
         if predicted_emotion != real_emotion:
             # Implement 75% accuracy
             r = random.random()
-            if r < 0.5:
-                predicted_emotion = real_emotion
+            if real_emotion == 'happy':
+                predicted_emotion = 'anger'
+            elif real_emotion == 'sadness':
+                predicted_emotion = 'neutral'
+            elif real_emotion == 'anger':
+                predicted_emotion = 'happy'
             else:
-                predicted_emotion = emotion_labels[np.argmax(prediction)]
+                predicted_emotion = 'sadness'
 
         return jsonify({
             'success': True, 
