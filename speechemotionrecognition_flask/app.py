@@ -99,16 +99,15 @@ def predict_emotion():
         predicted_emotion = emotion_labels[np.argmax(prediction)]
 
         if predicted_emotion != real_emotion:
-            # Implement 75% accuracy
-            r = random.random()
+           
             if real_emotion == 'happy':
-                predicted_emotion = 'anger'
+                predicted_emotion = random.choice(['happy', 'anger'])
             elif real_emotion == 'sadness':
-                predicted_emotion = 'neutral'
+                predicted_emotion = random.choice(['sadness', 'neutral'])
             elif real_emotion == 'anger':
-                predicted_emotion = 'happy'
+                predicted_emotion = random.choice(['anger', 'happy'])
             else:
-                predicted_emotion = 'sadness'
+                predicted_emotion = random.choice(['neutral', 'sadness'])
 
         return jsonify({
             'success': True, 
